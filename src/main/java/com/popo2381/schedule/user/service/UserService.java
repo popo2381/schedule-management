@@ -17,9 +17,13 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
+        if(request.getPassword() == null || request.getPassword().length() < 8) {
+            throw new IllegalArgumentException("Password length should be at least 8 characters");
+        }
         User user = new User(
                 request.getUsername(),
-                request.getEmail()
+                request.getEmail(),
+                request.getPassword()
         );
         User savedUser = userRepository.save(user);
         return new CreateUserResponse(
