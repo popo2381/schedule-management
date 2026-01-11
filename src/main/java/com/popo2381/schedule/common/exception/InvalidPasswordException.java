@@ -6,6 +6,6 @@ package com.popo2381.schedule.common.exception;
 public class InvalidPasswordException extends RuntimeException {
 
     public InvalidPasswordException() {
-        super("잘못된 비밀번호입니다.");
+        super("비밀번호가 일치하지 않습니다.");
     }
 }

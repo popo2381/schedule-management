@@ -74,7 +74,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             ScheduleNotFoundException.class,
             CommentNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            EmailNotFoundException.class
     })
     public ResponseEntity<Map<String, Object>> handleNotFoundException(RuntimeException e) {
 

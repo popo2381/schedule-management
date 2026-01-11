@@ -2,6 +2,9 @@ package com.popo2381.schedule.auth.service;
 
 import com.popo2381.schedule.auth.dto.LoginRequest;
 import com.popo2381.schedule.auth.dto.SessionUser;
+import com.popo2381.schedule.common.exception.EmailNotFoundException;
+import com.popo2381.schedule.common.exception.InvalidPasswordException;
+import com.popo2381.schedule.config.PasswordEncoder;
 import com.popo2381.schedule.user.entity.User;
 import com.popo2381.schedule.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public SessionUser login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("Invalid email address provided")
+                () -> new EmailNotFoundException(request.getEmail())
         );
-        if(!user.getPassword().equals(request.getPassword())) {
-            throw new IllegalArgumentException("Invalid password provided");
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException();
         }
 
         return new SessionUser(user.getId(), user.getUsername(), user.getEmail());

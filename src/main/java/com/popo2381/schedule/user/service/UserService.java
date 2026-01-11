@@ -1,6 +1,7 @@
 package com.popo2381.schedule.user.service;
 
 import com.popo2381.schedule.common.exception.UserNotFoundException;
+import com.popo2381.schedule.config.PasswordEncoder;
 import com.popo2381.schedule.user.dto.*;
 import com.popo2381.schedule.user.entity.User;
 import com.popo2381.schedule.user.repository.UserRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
@@ -23,8 +25,9 @@ public class UserService {
         User user = new User(
                 request.getUsername(),
                 request.getEmail(),
-                request.getPassword()
+                passwordEncoder.encode(request.getPassword())
         );
+        System.out.println("### " + user.getPassword());
         User savedUser = userRepository.save(user);
         return new CreateUserResponse(
                 savedUser.getId(),
