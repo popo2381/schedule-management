@@ -18,7 +18,7 @@ public class UserService {
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
         if(request.getPassword() == null || request.getPassword().length() < 8) {
-            throw new IllegalArgumentException("Password length should be at least 8 characters");
+            throw new IllegalArgumentException("비밀번호는 최소 8자, 최대 30자 이내입니다.");
         }
         User user = new User(
                 request.getUsername(),

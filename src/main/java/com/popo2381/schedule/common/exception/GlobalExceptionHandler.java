@@ -55,6 +55,20 @@ public class GlobalExceptionHandler {
     }
 
     /* ===========================
+       400 Bad Request - 조건 오류
+       =========================== */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(
+            IllegalArgumentException e
+    ) {
+        Map<String, String> response = new HashMap<>();
+        response.put("code", "BAD_REQUEST");
+        response.put("message", e.getMessage());
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    /* ===========================
        404 Not Found
        =========================== */
     @ExceptionHandler({
