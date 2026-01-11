@@ -1,7 +1,6 @@
 package com.popo2381.schedule.schedule.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 /**
@@ -9,8 +8,6 @@ import lombok.Getter;
  */
 @Getter
 public class CreateScheduleRequest {
-    @NotNull(message = "id는 필수 입력 값입니다.")
-    private Long userId;
     @NotBlank(message = "제목은 필수 입력 값입니다.")
     @Size(max = 30, message = "제목은 최대 30자 이내입니다.")
     private String title;

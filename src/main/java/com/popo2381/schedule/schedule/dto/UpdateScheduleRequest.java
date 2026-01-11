@@ -14,4 +14,6 @@ public class UpdateScheduleRequest {
     @NotBlank(message = "내용은 필수 입력 값입니다.")
     @Size(max = 200, message = "내용은 최대 200자 이내입니다.")
     private String content;
+    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
+    private String password;
 }

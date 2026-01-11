@@ -1,5 +1,6 @@
 package com.popo2381.schedule.user.service;
 
+import com.popo2381.schedule.common.exception.InvalidPasswordException;
 import com.popo2381.schedule.common.exception.UserNotFoundException;
 import com.popo2381.schedule.config.PasswordEncoder;
 import com.popo2381.schedule.user.dto.*;
@@ -69,6 +70,9 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(userId)
         );
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException();
+        }
         user.update(request.getUsername(), request.getEmail());
         return new UpdateUserResponse(
                 user.getId(),
@@ -80,10 +84,12 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long userId) {
-        boolean existence = userRepository.existsById(userId);
-        if (!existence) {
-            throw new UserNotFoundException(userId);
+    public void delete(Long userId, String password) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException(userId)
+        );
+        if(!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException();
         }
         userRepository.deleteById(userId);
     }

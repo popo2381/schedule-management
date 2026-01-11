@@ -28,12 +28,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
     @PutMapping("/users/{userId}")
-    public ResponseEntity<UpdateUserResponse> updateUser(@Valid @PathVariable Long userId, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UpdateUserResponse> updateUser(
+            @PathVariable Long userId, @Valid @RequestBody UpdateUserRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
     }
     @DeleteMapping("/users/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        userService.delete(userId);
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long userId, @Valid @RequestBody DeleteUserRequest request) {
+        String password = request.getPassword();
+        userService.delete(userId, password);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

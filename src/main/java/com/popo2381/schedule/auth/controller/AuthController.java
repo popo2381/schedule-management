@@ -4,6 +4,7 @@ import com.popo2381.schedule.auth.dto.LoginRequest;
 import com.popo2381.schedule.auth.dto.SessionUser;
 import com.popo2381.schedule.auth.service.AuthService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpSession session) {
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request, HttpSession session) {
         SessionUser sessionUser = authService.login(request);
         session.setAttribute("LOGIN_USER", sessionUser);
         return ResponseEntity.status(HttpStatus.OK).build();

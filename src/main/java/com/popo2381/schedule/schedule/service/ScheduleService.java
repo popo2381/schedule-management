@@ -1,6 +1,8 @@
 package com.popo2381.schedule.schedule.service;
 
+import com.popo2381.schedule.common.exception.InvalidPasswordException;
 import com.popo2381.schedule.common.exception.UserNotFoundException;
+import com.popo2381.schedule.config.PasswordEncoder;
 import com.popo2381.schedule.schedule.entity.Schedule;
 import com.popo2381.schedule.common.exception.ScheduleNotFoundException;
 import com.popo2381.schedule.schedule.repository.ScheduleRepository;
@@ -18,11 +20,12 @@ import java.util.List;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public CreateScheduleResponse save(CreateScheduleRequest request) {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(
-                () -> new UserNotFoundException(request.getUserId())
+    public CreateScheduleResponse save(Long loginUserId, CreateScheduleRequest request) {
+        User user = userRepository.findById(loginUserId).orElseThrow(
+                () -> new UserNotFoundException(loginUserId)
         );
         Schedule schedule = new Schedule(
                 user,
@@ -69,10 +72,16 @@ public class ScheduleService {
     }
 
     @Transactional
-    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
+    public UpdateScheduleResponse update(Long scheduleId, Long loginUserId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new ScheduleNotFoundException(scheduleId)
         );
+        User user = userRepository.findById(loginUserId).orElseThrow(
+                () -> new UserNotFoundException(loginUserId)
+        );
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException();
+        }
         schedule.update(request.getTitle(), request.getContent());
         return new UpdateScheduleResponse(
                 schedule.getId(),
@@ -85,10 +94,15 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Void delete(Long scheduleId) {
-        boolean existence = scheduleRepository.existsById(scheduleId);
-        if (!existence) {
-            throw new ScheduleNotFoundException(scheduleId);
+    public Void delete(Long scheduleId, Long loginUserId, DeleteScheduleRequest request) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new ScheduleNotFoundException(scheduleId)
+        );
+        User user = userRepository.findById(loginUserId).orElseThrow(
+                () -> new UserNotFoundException(loginUserId)
+        );
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException();
         }
         scheduleRepository.deleteById(scheduleId);
         return null;
